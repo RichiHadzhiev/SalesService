@@ -1,6 +1,7 @@
 package sales.service.api.sales;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import sales.service.api.customers.Customer;
+import sales.service.api.customers.CustomerService;
+import sales.service.api.dto.SaleDTO;
 
 @RestController
 public class SaleController {
@@ -18,9 +21,17 @@ public class SaleController {
 	@Autowired
 	private SaleService saleService;
 	
+	@Autowired
+	private CustomerService customerService;
+	
 	@RequestMapping("/customers/{customerId}/sales")
-	public List<Sale> getAllSales(@PathVariable Long customerId) {
-		return saleService.getAllSales(customerId);
+	public List<SaleDTO> getAllSales(@PathVariable Long customerId) {
+		List<SaleDTO> dtos = new ArrayList<SaleDTO>();
+		List<Sale> sales = saleService.getAllSales(customerId);
+		for(Sale sale : sales){
+			dtos.add(SaleDTO.entityToDTO(sale));
+		}
+		return dtos;
 	}
 	
 	@RequestMapping("/customers/{customerId}/sales/{id}")
@@ -29,16 +40,16 @@ public class SaleController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/customers/{customerId}/sales")
-	public void addSale(@RequestBody Sale sale, @PathVariable Long customerId) {
-		Customer customer = new Customer();
-		customer.setId(customerId);
-		sale.setCustomer(customer);
-		sale.setDiscount(new BigDecimal(10));
+	public void addSale(@RequestBody Sale sale, @PathVariable Long customerId) throws Exception {
+		Customer customer = customerService.getCustomer(customerId);
+		sale.setDiscount(customer.getDiscount());
 		sale.setDiscountedPrice(sale.getPrice().subtract(sale.getPrice().multiply(sale.getDiscount().divide(new BigDecimal(100)))));
+		customer.setTurnOver(customer.getTurnOver().add(sale.getDiscountedPrice()));
+		sale.setCustomer(customer);
 		saleService.addSale(sale);
-		//System.out.println(customer.getDiscount());
 	}
 	
+	//needs to be corrected or deleted
 	@RequestMapping(method = RequestMethod.PUT, value = "/customers/{customerId}/sales/{id}")
 	public void updateSale(@RequestBody Sale sale, @PathVariable Long id, @PathVariable Long customerId) {
 		Customer customer = new Customer();
@@ -52,7 +63,7 @@ public class SaleController {
 		saleService.deleteSale(id);
 	}
 	
-	@RequestMapping("/customer/{cutomerId}/sales/min_price")
+	@RequestMapping("/customers/{cutomerId}/sales/min_price")
 	public Sale getMinPrice() {
 		return saleService.getMinPrice();
 	}

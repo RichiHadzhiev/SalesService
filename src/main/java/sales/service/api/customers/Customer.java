@@ -18,6 +18,8 @@ public class Customer {
 	
 	private BigDecimal discount;
 	
+	private BigDecimal turnOver;
+
 	public Long getId() {
 		return this.id;
 	}
@@ -30,6 +32,10 @@ public class Customer {
 		return this.discount;
 	}
 	
+	public BigDecimal getTurnOver() {
+		return turnOver;
+	}
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -40,5 +46,9 @@ public class Customer {
 	
 	public void setDiscount(BigDecimal discount) {
 		this.discount = discount;
+	}
+	
+	public void setTurnOver(BigDecimal turnOver) {
+		this.turnOver = turnOver;
 	}
 }

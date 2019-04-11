@@ -1,5 +1,6 @@
 package sales.service.api.customers;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,13 @@ public class CustomerController {
 	}
 	
 	@RequestMapping("/customers/{id}")
-	public Customer getCustomer(@PathVariable Long id) {
+	public Customer getCustomer(@PathVariable Long id) throws Exception {
 		return customerService.getCustomer(id);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/customers")
 	public void addCustomer(@RequestBody Customer customer) {
+		customer.setTurnOver(new BigDecimal(0));
 		customerService.addCustomer(customer);
 	}
 	

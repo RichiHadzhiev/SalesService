@@ -9,6 +9,6 @@ public interface SaleRepository extends CrudRepository<Sale, Long>{
 	
 	public List<Sale> findByCustomerId(Long customerId);
 	
-	@Query("select s from Sale s where price = (select min(price) from Sale)")
+	@Query("select s from Sale s where s.price = (select min(s.price) from s)")
 	public Sale leastExpensive();
 }

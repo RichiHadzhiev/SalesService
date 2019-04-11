@@ -18,8 +18,12 @@ public class CustomerService {
 		return customers;
 	}
 	
-	public Customer getCustomer(Long id) {
-		return customerRepository.findOne(id);
+	public Customer getCustomer(Long id) throws Exception {
+		Customer customer = customerRepository.findOne(id);
+		if (customer == null) {
+			throw new Exception("There is no customer with id " + id);
+		}
+		return customer;
 	}
 
 	public void addCustomer(Customer customer) {

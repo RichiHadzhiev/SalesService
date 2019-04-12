@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import sales.service.api.Tier;
 import sales.service.api.customers.Customer;
 import sales.service.api.customers.CustomerService;
 import sales.service.api.dto.SaleDTO;
@@ -45,6 +46,13 @@ public class SaleController {
 		sale.setDiscount(customer.getDiscount());
 		sale.setDiscountedPrice(sale.getPrice().subtract(sale.getPrice().multiply(sale.getDiscount().divide(new BigDecimal(100)))));
 		customer.setTurnOver(customer.getTurnOver().add(sale.getDiscountedPrice()));
+		if((customer.getTurnOver().compareTo(new BigDecimal(1000)) >= 0 &&
+				customer.getTurnOver().compareTo(new BigDecimal(3000)) < 0) ||
+				(customer.getTier() != Tier.PLATINUM && //To skip calling this method if the tier is already platinum.
+				customer.getTurnOver().compareTo(new BigDecimal(3000)) >= 0)) { //Without this line it would set the tier to platinum if the updated turnover is below 1000.
+			customer.setTier(saleService.updateTier(customer.getTurnOver())); 
+			customer.setDiscount(customerService.discountFromTier(customer.getTier())); 
+		}
 		sale.setCustomer(customer);
 		saleService.addSale(sale);
 	}

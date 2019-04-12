@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import sales.service.api.Tier;
+
 @Entity
 public class Customer {
 	@Id
@@ -19,6 +21,8 @@ public class Customer {
 	private BigDecimal discount;
 	
 	private BigDecimal turnOver;
+	
+	private Tier tier;
 
 	public Long getId() {
 		return this.id;
@@ -36,6 +40,10 @@ public class Customer {
 		return turnOver;
 	}
 	
+	public Tier getTier() {
+		return tier;
+	}
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -50,5 +58,9 @@ public class Customer {
 	
 	public void setTurnOver(BigDecimal turnOver) {
 		this.turnOver = turnOver;
+	}
+	
+	public void setTier(Tier tier) {
+		this.tier = tier;
 	}
 }

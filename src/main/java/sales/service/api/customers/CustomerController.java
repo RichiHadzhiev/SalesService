@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import sales.service.api.Tier;
+
 @RestController
 public class CustomerController {
 	
@@ -29,6 +31,8 @@ public class CustomerController {
 	@RequestMapping(method = RequestMethod.POST, value = "/customers")
 	public void addCustomer(@RequestBody Customer customer) {
 		customer.setTurnOver(new BigDecimal(0));
+		customer.setTier(Tier.BRONZE);
+		customer.setDiscount(customerService.discountFromTier(customer.getTier()));
 		customerService.addCustomer(customer);
 	}
 	
